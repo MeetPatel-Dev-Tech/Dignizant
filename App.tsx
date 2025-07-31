@@ -1,28 +1,41 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { store, RootState } from './src/redux/store';
+import { setToken } from './src/redux/authSlice';
+import { getItem, StorageKeys } from './src/utils/storage';
+import AppNavigator from './src/navigation/AppNavigator';
+import AuthNavigator from './src/navigation/AuthNavigator';
+import { NavigationContainer } from '@react-navigation/native';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+const RootApp = () => {
+  const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.auth.token);
+  const [loading, setLoading] = useState(true);
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      const storedToken = await getItem(StorageKeys.TOKEN);
+      if (storedToken) {
+        dispatch(setToken(storedToken));
+      }
+      setLoading(false);
+    };
+    bootstrapAsync();
+  }, []);
+
+  if (loading) return null;
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
-    </View>
+    <NavigationContainer>
+      {token ? <AppNavigator /> : <AuthNavigator />}
+    </NavigationContainer>
+  );
+};
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <RootApp />
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
