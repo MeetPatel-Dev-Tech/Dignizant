@@ -67,7 +67,7 @@ export default function SignUp() {
 
   const handleSubmit = async () => {
     if (!isEmailValid(form.email)) {
-      Alert.alert('Invalid Email');
+      // Alert.alert('Invalid Email');
       return;
     }
 
