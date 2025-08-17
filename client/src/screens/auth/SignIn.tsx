@@ -11,17 +11,19 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import FormInput from '../components/FormInput';
-import CommonButton from '../components/CommonButton';
-import COLORS from '../constants/colors';
+import FormInput from '../../components/FormInput';
+import CommonButton from '../../components/CommonButton';
+import COLORS from '../../constants/colors';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthAction, type RootStackParamList } from '../types/auth';
-import { loginUser } from '../services/api';
-import { isEmailValid, isPasswordValid } from '../utils/validators';
+import { AuthAction, type RootStackParamList } from '../../types/auth';
+import { isEmailValid, isPasswordValid } from '../../utils/validators';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CustomHeader from '../components/CustomHeader';
-import CornerCurves from '../components/CornerCurves';
-import { commonStyles } from '../constants/appStyles';
+import CustomHeader from '../../components/CustomHeader';
+import CornerCurves from '../../components/CornerCurves';
+import { commonStyles } from '../../constants/appStyles';
+import { setItem, StorageKeys } from '../../utils/storage';
+import { setToken } from '../../redux/authSlice';
+import { loginUser } from '../../services/auth.service';
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -59,17 +61,11 @@ export default function SignIn() {
 
     try {
       const response = await loginUser({ email, password });
-
-      if (response.status === 200) {
-        navigation.navigate('OtpVerification', {
-          email: email,
-          action: AuthAction.LOGIN,
-        });
-      } else {
-        Alert.alert(
-          'Login Failed',
-          response.data.message || 'Something went wrong',
-        );
+      if (response.success) {
+        const token = response.token || '';
+        await setItem(StorageKeys.TOKEN, token);
+        await setItem(StorageKeys.USER, JSON.stringify(response.data));
+        dispatch(setToken(token));
       }
     } catch (error: any) {
       Alert.alert('Login Failed', error.response?.data?.message || 'Try again');

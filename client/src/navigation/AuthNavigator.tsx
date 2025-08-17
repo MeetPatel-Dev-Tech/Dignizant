@@ -1,10 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import OtpVerification from '../screens/OtpVerification';
-import SignUp from '../screens/SignUp';
-import SignIn from '../screens/SignIn';
+import OtpVerification from '../screens/auth/OtpVerification';
+import SignUp from '../screens/auth/SignUp';
+import SignIn from '../screens/auth/SignIn';
 import type { RootStackParamList } from '../types/auth';
-import Success from '../screens/Success';
+import Success from '../screens/auth/Success';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

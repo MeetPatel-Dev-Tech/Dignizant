@@ -16,7 +16,7 @@ jest.mock('../services/api', () => ({
 }));
 
 import { registerUser } from '../services/api';
-import SignUp from '../screens/SignUp';
+import SignUp from '../screens/auth/SignUp';
 
 describe('SignUp Screen', () => {
   beforeEach(() => {

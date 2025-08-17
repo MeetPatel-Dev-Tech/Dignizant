@@ -1,62 +1,40 @@
-import axios, {
-  InternalAxiosRequestConfig,
-  AxiosResponse,
-  AxiosHeaders,
-} from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import { API_BASE_URL } from '@env';
+import { store } from '../redux/store';
 
 const api = axios.create({
   baseURL: 'http://10.0.2.2:8080/api',
-  headers: new AxiosHeaders({ 'Content-Type': 'application/json' }),
+  headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
 
+// Request interceptor
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Ensure headers always exist
-    if (!config.headers) {
-      config.headers = new AxiosHeaders(); // ✅ Correct type
-    }
+  async config => {
+    // Add Authorization token if exists
+    const state = store.getState();
+    const token = state.auth.token; // 👈 adjust based on your slice structure
 
-    // const token = await AsyncStorage.getItem('token');
-    // if (token) config.headers.set('Authorization', `Bearer ${token}`);
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
 
     console.log('[API REQUEST]', config);
     return config;
   },
-  error => {
-    console.log('[REQUEST ERROR]', JSON.stringify(error));
-    return Promise.reject(error);
-  },
+  error => Promise.reject(error),
 );
 
+// Response interceptor
 api.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log(
-      '[API RESPONSE]',
-      response.status,
-      response.config.url,
-      response.data,
-    );
-    return response.data;
+    console.log('[API RESPONSE]', response.data);
+    return response.data; // ⚡ Only return response.data
   },
-  error => {
-    if (error.response) {
-      console.log(
-        '[RESPONSE ERROR]',
-        error.response.status,
-        error.response.data,
-      );
-    } else if (error.request) {
-      console.error('[NO RESPONSE]', error.request);
-    } else {
-      console.error('[AXIOS ERROR]', error.message);
-    }
+  (error: AxiosError) => {
+    console.error('[API ERROR]', error.response?.data || error.message);
     return Promise.reject(error);
   },
 );
-
-export const registerUser = (data: any) => api.post('/auth/signup', data);
-export const loginUser = (data: any) => api.post('/auth/login', data);
 
 export default api;

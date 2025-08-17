@@ -2,7 +2,7 @@ export const isEmailValid = (email: string) => /\S+@\S+\.\S+/.test(email);
 
 export const isPasswordValid = (password: string) => {
   const hasAtSymbol = password.includes('@');
-  const isLongEnough = password.length >= 10;
+  const isLongEnough = password.length >= 5;
   const hasNumber = /\d/.test(password); // at least one digit
   const hasUppercase = /[A-Z]/.test(password); // at least one uppercase letter
 

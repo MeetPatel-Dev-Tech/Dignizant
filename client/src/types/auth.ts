@@ -8,6 +8,18 @@ export interface RegisterPayload {
   privacy_policy_accept: boolean;
 }
 
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+  token: string;
+}
+
 export interface LoginPayload {
   email: string;
   password: string;
@@ -25,6 +37,8 @@ export type RootStackParamList = {
   OtpVerification: { email: string; action: string };
   Success: undefined;
   Dashboard: undefined;
+  AllUsers: undefined;
+  ChatScreen: undefined;
 };
 
 export enum AuthAction {

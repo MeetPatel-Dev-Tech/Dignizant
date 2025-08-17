@@ -2,13 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/auth';
-import COLORS from '../constants/colors';
-import CommonButton from '../components/CommonButton';
-import { getItem, StorageKeys } from '../utils/storage';
-import { setToken } from '../redux/authSlice';
-import CustomHeader from '../components/CustomHeader';
-import { commonStyles } from '../constants/appStyles';
+import { RootStackParamList } from '../../types/auth';
+import COLORS from '../../constants/colors';
+import CommonButton from '../../components/CommonButton';
+import { getItem, StorageKeys } from '../../utils/storage';
+import { setToken } from '../../redux/authSlice';
+import CustomHeader from '../../components/CustomHeader';
+import { commonStyles } from '../../constants/appStyles';
 
 type SuccessScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

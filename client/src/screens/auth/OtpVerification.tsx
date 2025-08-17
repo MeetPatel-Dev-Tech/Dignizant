@@ -11,16 +11,16 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../types/auth';
-import { AuthAction } from '../types/auth';
+import type { RootStackParamList } from '../../types/auth';
+import { AuthAction } from '../../types/auth';
 
-import { setItem, StorageKeys } from '../utils/storage';
-import { verifyOtp } from '../services/api';
+import { setItem, StorageKeys } from '../../utils/storage';
+import { verifyOtp } from '../../services/api';
 import { useDispatch } from 'react-redux';
-import COLORS from '../constants/colors';
-import { setToken } from '../redux/authSlice';
-import CustomHeader from '../components/CustomHeader';
-import { commonStyles } from '../constants/appStyles';
+import COLORS from '../../constants/colors';
+import { setToken } from '../../redux/authSlice';
+import CustomHeader from '../../components/CustomHeader';
+import { commonStyles } from '../../constants/appStyles';
 
 type SignInScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

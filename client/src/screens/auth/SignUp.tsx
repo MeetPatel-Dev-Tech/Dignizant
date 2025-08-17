@@ -13,21 +13,23 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-import { registerUser } from '../services/api';
 import {
   isEmailValid,
   isNameValid,
   isPasswordValid,
   isUsernameValid,
-} from '../utils/validators';
-import { AuthAction, RootStackParamList } from '../types/auth';
+} from '../../utils/validators';
+import { AuthAction, RootStackParamList } from '../../types/auth';
 
-import FormInput from '../components/FormInput';
-import CommonButton from '../components/CommonButton';
-import COLORS from '../constants/colors';
-import CustomHeader from '../components/CustomHeader';
-import { commonStyles } from '../constants/appStyles';
+import FormInput from '../../components/FormInput';
+import CommonButton from '../../components/CommonButton';
+import COLORS from '../../constants/colors';
+import CustomHeader from '../../components/CustomHeader';
+import { commonStyles } from '../../constants/appStyles';
+import { useDispatch } from 'react-redux';
+import { setItem, StorageKeys } from '../../utils/storage';
+import { setToken } from '../../redux/authSlice';
+import { registerUser } from '../../services/auth.service';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -35,10 +37,10 @@ type SignUpScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 export default function SignUp() {
+  const dispatch = useDispatch();
   const navigation = useNavigation<SignUpScreenNavigationProp>();
   const [form, setForm] = useState({
     email: '',
-    username: '',
     first_name: '',
     last_name: '',
     password: '',
@@ -50,7 +52,6 @@ export default function SignUp() {
   const [errors, setErrors] = useState({
     first_name: '',
     last_name: '',
-    username: '',
     email: '',
     password: '',
     confirm_password: '',
@@ -90,14 +91,20 @@ export default function SignUp() {
 
     try {
       setLoading(true);
-      const { confirm_password, ...payload } = form;
+      const {
+        confirm_password,
+        tos_accept,
+        privacy_policy_accept,
+        ...payload
+      } = form;
 
       const response = await registerUser(payload);
-      if (response.status === 201) {
-        navigation.navigate('OtpVerification', {
-          email: form.email,
-          action: AuthAction.REGISTER,
-        });
+      console.log(response);
+      if (response.success) {
+        const token = response.token || '';
+        await setItem(StorageKeys.TOKEN, token);
+        await setItem(StorageKeys.USER, JSON.stringify(response.data));
+        dispatch(setToken(token));
       }
     } catch (error: any) {
       Alert.alert(
@@ -168,7 +175,7 @@ export default function SignUp() {
                 }}
               />
 
-              <FormInput
+              {/* <FormInput
                 placeholder="Username"
                 required
                 value={form.username}
@@ -183,7 +190,7 @@ export default function SignUp() {
                         : 'Minimum 4 characters required',
                   }));
                 }}
-              />
+              /> */}
 
               <FormInput
                 placeholder="Email"
